@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import classes from "./App.module.css";
+import Filter from "./components/Filter/Filter";
+import Recipes from "./components/Recipes/Recipes";
+import AppLogic from "./AppLogic";
 
-function App() {
+const App: React.FC = () => {
+  const {
+    recipesData,
+    fetchData,
+    filterValue,
+    filterHandler,
+    changePageHandler,
+    deleteItemHandler,
+    error,
+  } = AppLogic();
+
+  const { currentPage } = recipesData;
+  useEffect(() => {
+    fetchData(currentPage, filterValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, filterValue]);
+
+  if (error)
+    return <div className={classes.containerError}>Something went wrong!</div>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={classes.container}>
+      <h1>Recipes overview</h1>
+      <Filter onFilterHandler={filterHandler} />
+      <Recipes
+        recipesInfo={recipesData}
+        changePage={changePageHandler}
+        deleteItem={deleteItemHandler}
+      />
     </div>
   );
-}
+};
 
 export default App;
